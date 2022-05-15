@@ -29,6 +29,10 @@ public class Player : MonoBehaviour
     [SerializeField]
     GameObject MaoDireita, MaoEsqueda, Pe_direito, Pe_esquerdo;
     #endregion
+    private void Awake()
+    {
+        transform.tag = "Player";
+    }
     void Start()
     {
         character_Controlhe = GetComponent<CharacterController>();
