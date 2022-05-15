@@ -9,7 +9,8 @@ public class Player : MonoBehaviour
 {
     private Animator anin;
     private CharacterController character_Controlhe;
-
+    [SerializeField]
+    private int Char_ID;
     #region Var Movimeto
     [SerializeField]
     private float speed, junpSpeed;
@@ -20,15 +21,26 @@ public class Player : MonoBehaviour
     Vector3 movementDirection;
     Vector3 velocity;
     Vector3 V_rotatao;
+    [SerializeField]
+    private CapsuleCollider cap;
     #endregion
+
     #region varLutas
+    [SerializeField]
+    private float Life = 100.0f, lifeMax = 100.0f;
     private bool combo;
     private bool BlockJunp = false;
     private bool BlockSpin = false;
+    private bool dead = false;
+    [SerializeField]
+    private GameObject Shoot; //tiro do Payer 2
     private float VelNormal;
     [SerializeField]
     GameObject MaoDireita, MaoEsqueda, Pe_direito, Pe_esquerdo;
+    float cadenciaTiro = 1;// apenas Para Player2
     #endregion
+
+
     private void Awake()
     {
         transform.tag = "Player";
@@ -46,9 +58,18 @@ public class Player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Movimentacao();
-        Animacoes();
-        Atacar();
+        if (!dead)
+        {
+            Movimentacao();
+            Animacoes();
+            Atacar();
+        }
+        if(Life <= 0 && dead == false)
+        {
+            anin.SetBool("vivo", false);
+            Morto();
+            dead = true;
+        }
     }
     void Movimentacao()
     {
@@ -97,19 +118,44 @@ public class Player : MonoBehaviour
         anin.SetBool("Ground", character_Controlhe.isGrounded);
         //Movimentacao  Ground
     }
-    #region voiddeCombate
+   
+    void Change_Char(int c)
+    {
+        Char_ID = c;
+    }
+
+    #region void de Combate
+
     void Atacar()
     {
-        if(Input.GetMouseButton(0))
+        //Comando_Player_1
+        if (Char_ID == 0)
         {
-            BlockJunp = true;      
-            anin.SetBool("Atak", true);  
+            if (Input.GetMouseButton(0))
+            {
+                BlockJunp = true;
+                anin.SetBool("Atak", true);
+            }
+            if (Input.GetMouseButton(0) && combo == true)
+            {
+                anin.SetTrigger("Next_ataq");
+                combo = false;
+            }
         }
-        if (Input.GetMouseButton(0) && combo == true)
+        
+        if(cadenciaTiro < 0.6f)
         {
-            anin.SetTrigger("Next_ataq");
-            combo = false;
-        }       
+            cadenciaTiro += 2.0f * Time.deltaTime;
+        }
+        //Comando_Player_2
+        if( Char_ID == 1)
+        { 
+            if (Input.GetMouseButton(0) && cadenciaTiro >= 0.5f)
+            {
+                Instantiate(Shoot, MaoDireita.transform.position, transform.rotation);
+                cadenciaTiro = 0;
+            }
+        }
     }
     void AtaqueStatus()
     {        
@@ -120,31 +166,42 @@ public class Player : MonoBehaviour
         if(MaoDireita)
         {
             MaoDireita.SetActive(true);
-        }        
+        }    
+        if (MaoEsqueda) MaoEsqueda.SetActive(false);
+        if (Pe_direito) Pe_direito.SetActive(false);
+        if (Pe_esquerdo) Pe_esquerdo.SetActive(false);
     }
     void AtaqueMaoEsqueda()
     {
-        if (MaoDireita)
+        if (MaoEsqueda)
         {
             MaoEsqueda.SetActive(true);
         }
-    }
-   
+        if (MaoDireita) MaoDireita.SetActive(false);
+        if (Pe_direito) Pe_direito.SetActive(false);
+        if (Pe_esquerdo) Pe_esquerdo.SetActive(false);
+    }   
     void AtaqueChuteDireito()
     {
-        if (MaoDireita)
+        if (Pe_direito)
         {
             Pe_direito.SetActive(true);
-        } 
+        }
+        if (MaoDireita) MaoDireita.SetActive(false);
+        if (MaoEsqueda) MaoEsqueda.SetActive(false);
+        if (Pe_esquerdo) Pe_esquerdo.SetActive(false);
     }
     void AtaqueChuteesquerdo()
     {
-        if (MaoDireita)
+        if (Pe_esquerdo)
         {
             Pe_esquerdo.SetActive(true);
         }
+        if (MaoDireita) MaoDireita.SetActive(false);
+        if (MaoEsqueda) MaoEsqueda.SetActive(false);
+        if (Pe_direito) Pe_direito.SetActive(false);    
     }
-    void FimAtaque()
+    void FimAtaque()// Desativa os Colisores de Ataque 
     {
         MaoDireita.SetActive(false);
         MaoEsqueda.SetActive(false);
@@ -189,7 +246,32 @@ public class Player : MonoBehaviour
     {
         BlockSpin = true;
     }
+    public void hit(float dano = 0)
+    {
+        FimAtaque();
+        Life -= dano;
+        anin.SetBool("Hit", true);
+    }
+    void Endhit()
+    {
+        anin.SetBool("Hit", false);
+    }
+    void Morto()
+    {   
+        if (cap) cap.enabled = false;
+        anin.SetBool("died", true);
+        anin.SetBool("vivo", true);
+        StopAllCoroutines();     
+        transform.tag = "Morto";
+    }
+
+    void Morrer_Event_FIX() // Evita que o NPC fique preso em Loop de morte
+    {
+        anin.SetBool("died", false);
+    }
     #endregion
+
+    
 }
 
 
