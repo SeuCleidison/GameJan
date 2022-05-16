@@ -9,18 +9,18 @@ public class dano : MonoBehaviour
     [SerializeField]
     private bool Projetil = false;
     [SerializeField]
-    private float VelocidadeProjetil = 5.0f;
+    private float VelocidadeProjetil = 3.0f;
     [SerializeField]
     private bool DesativaAoAtigir = true;
     NPC npc;
     Player player;
     float dano_ataque = 10.0f;
-    
+    public bool Derrubar = false; 
     void Start()
     {
         if (Projetil)
         {
-            Destroy(gameObject,1.0f);
+            Destroy(gameObject,0.75f);
         }
     }
 
@@ -34,13 +34,16 @@ public class dano : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-
         if (!Inimigo)
         {
             if (other.gameObject.CompareTag("Inimigo"))
             {
                 npc = other.GetComponent<NPC>();
                 npc.hit(dano_ataque);
+                if(Derrubar)
+                {
+                    npc.cair();
+                }
                 if(DesativaAoAtigir)
                 {
                     gameObject.SetActive(false);
@@ -59,6 +62,5 @@ public class dano : MonoBehaviour
                 }
             }
         }
-
     }
 }

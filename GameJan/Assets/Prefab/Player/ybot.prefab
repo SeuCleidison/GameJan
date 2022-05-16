@@ -1107,8 +1107,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7cc32ea99a574e41a1866e3032caa20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Char_ID: 0
   speed: 0.8
   junpSpeed: 5
+  cap: {fileID: 0}
+  Life: 100
+  lifeMax: 100
+  Shoot: {fileID: 0}
   MaoDireita: {fileID: 2643076195213676988}
   MaoEsqueda: {fileID: 3910426213864850981}
   Pe_direito: {fileID: 2210867794655052495}

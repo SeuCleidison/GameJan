@@ -18,6 +18,8 @@ public class Player : MonoBehaviour
     float horizontalInput;
     float verticalInput;
     float magnitude;
+    [HideInInspector]
+    public bool RightView;
     Vector3 movementDirection;
     Vector3 velocity;
     Vector3 V_rotatao;
@@ -40,7 +42,6 @@ public class Player : MonoBehaviour
     float cadenciaTiro = 1;// apenas Para Player2
     #endregion
 
-
     private void Awake()
     {
         transform.tag = "Player";
@@ -49,6 +50,7 @@ public class Player : MonoBehaviour
     {
         character_Controlhe = GetComponent<CharacterController>();
         anin = GetComponent<Animator>();
+        anin.SetBool("vivo", true);
         originalStepOff = character_Controlhe.stepOffset;
         VelNormal = speed;
         BlockJunp = false;
@@ -78,21 +80,31 @@ public class Player : MonoBehaviour
         verticalInput = (Input.GetAxis("Vertical") * speed);
         movementDirection = new Vector3(horizontalInput, 0, verticalInput);
         magnitude = Mathf.Clamp01(movementDirection.magnitude) * junpSpeed;
-        if (horizontalInput < 0 && BlockSpin == false)
+        if(RightView)
         {
             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(new Vector3(0, 270.0f, 0)), 20.0f * Time.deltaTime);
         }
-        if (horizontalInput > 0 && BlockSpin == false)
+        if (!RightView)
         {
             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(new Vector3(0, 90.0f, 0)), 20.0f * Time.deltaTime);
         }
+        if (horizontalInput < 0 && BlockSpin == false)
+        {
+            RightView = true;
+        
+        }
+        if (horizontalInput > 0 && BlockSpin == false)
+        {
+            RightView = false;
+           
+        }
         if (verticalInput > 0 && BlockSpin == false)
         {
-            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(new Vector3(0, 0.0f, 0)), 20.0f * Time.deltaTime);
+            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(new Vector3(0, 0.0f, 0)), 7.0f * Time.deltaTime);
         }
         if (verticalInput < 0 && BlockSpin == false)
         {
-            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(new Vector3(0, 180.0f, 0)), 20.0f * Time.deltaTime);
+            transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(new Vector3(0, 180.0f, 0)), 7.0f * Time.deltaTime);
         }
         YSpeed += Physics.gravity.y * Time.deltaTime * 2;
         if (character_Controlhe.isGrounded)

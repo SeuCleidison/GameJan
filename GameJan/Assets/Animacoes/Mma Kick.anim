@@ -73494,7 +73494,7 @@ AnimationClip:
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
-  - time: 0.96666664
+  - time: 1.6666666
     functionName: FimAtaque
     data: 
     objectReferenceParameter: {fileID: 0}
