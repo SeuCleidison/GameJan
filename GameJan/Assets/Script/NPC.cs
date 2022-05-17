@@ -16,14 +16,18 @@ public class NPC : MonoBehaviour
     private Rigidbody rig;
     [SerializeField]
     private CapsuleCollider capColl;
+    [SerializeField]
+    int novoPosicao = 0;
     #region Var de Combate
     [SerializeField]
     private GameObject Mao_dir, Mao_Esq, perna_dir, perna_Esq;
     private bool dead = false, Look_To_Player = false;
-    [SerializeField]
-    private bool Side_right;
-    private bool caido = false;
+    [HideInInspector]
+    public bool Side_right;
+    [SerializeField]//temp
+    private bool caido = false, Move_on_Ataque = true;
     Vector3 frontPon,BackPos;
+    Vector3[] evade = new Vector3[5];
     #endregion
     void Start()
     {
@@ -54,6 +58,7 @@ public class NPC : MonoBehaviour
             dead = true;
         }
     }
+    #region Animacoes Nao Combate
     void Movimento()
     {
         Target_distance = nave.remainingDistance;
@@ -75,36 +80,50 @@ public class NPC : MonoBehaviour
             if (Target_distance <= nave.stoppingDistance)
             {
                 Npc_Anim.SetFloat("Movimento", 0f);
-                Ataque();
-                Rotate_To_Target();
-            }
-            if (Look_To_Player)
+                if (Move_on_Ataque == true)
+                {
+                    Ataque();
+                }
+                Rotate_To_Target();               
+            }        
+            if (Look_To_Player &&  caido == true) // rotaciona O NPC para a direcao do Player
             {
                 Quaternion targetRotation;
                 targetRotation = Quaternion.LookRotation(Player.transform.position - transform.position);
                 targetRotation = Quaternion.Euler(new Vector3(transform.eulerAngles.x, targetRotation.eulerAngles.y, transform.eulerAngles.z));
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 10 * Time.deltaTime);
             }
+            if (novoPosicao > 0) //Faz o npc Se mover em um ponto aleatorio 
+            {
+                Evade();
+            }
+
         }
-        if (Side_right)
+        if (Move_on_Ataque == true)//Mover em Direcao para o taque
         {
-            nave.destination = frontPon;
+            if (Side_right)
+            {
+                nave.destination = frontPon;
+            }
+            if (!Side_right)
+            {
+                nave.destination = BackPos;
+            }           
         }
-        if (!Side_right)
+        if (Life <= 0 && dead == false)
         {
-            nave.destination = BackPos;
-        }
-        if (Life <=0 && dead == false)
-        {            
             Npc_Anim.SetBool("vivo", false);
             Morto();
-            dead = true;
         }
         ProcuraLado();
     }
+    
     public void cair()
     {
+        Move_on_Ataque = false;
         Npc_Anim.SetBool("Cair", true);
+        End_rotate();
+        nave.speed = 0;  
     }
     void noChaor()
     {
@@ -121,22 +140,43 @@ public class NPC : MonoBehaviour
         Npc_Anim.SetBool("NoChao", false);
         nave.speed = SpeedMove;
         if (capColl) capColl.enabled = true;
+        StartCoroutine(PausaMove());
     }
+    #endregion
     void ProcuraLado()//Escole O lado pra atacar direito ou esquerdo
-    {
-        
+    {        
         float dist_Fron = Vector3.Distance(frontPon, transform.position);
         float dist_Back = Vector3.Distance(BackPos, transform.position);
         if(dist_Back < dist_Fron)
         {
-            Side_right = false;
+           // Side_right = false;
         }
         if (dist_Back > dist_Fron)
         {
-            Side_right = true;
+           // Side_right = true;
         }
-
     }
+    IEnumerator PausaMove ()// Faz uma Pequena Pausa no movimento
+    {
+        yield return new WaitForSeconds(1.0f);       
+        novoPosicao = Random.Range(1, 5);
+        evade[1] = new Vector3(transform.position.x + 1, transform.position.y, transform.position.z + 1.3f);
+        evade[2] = new Vector3(transform.position.x + 1, transform.position.y, transform.position.z - 1.3f);
+        evade[3] = new Vector3(transform.position.x - 1, transform.position.y, transform.position.z + 1.3f);
+        evade[4] = new Vector3(transform.position.x - 1, transform.position.y, transform.position.z - 1.3f);
+    } 
+    void Evade()
+    {       
+        nave.destination = evade[novoPosicao];  
+       StartCoroutine(BackToAtaque());
+    }
+    IEnumerator BackToAtaque()// retorna O movimento de ataque
+    {
+        yield return new WaitForSeconds(2.0f);
+        novoPosicao = 0;
+        Move_on_Ataque = true;
+    }
+    
     #region funçoues de Combate
     void Ataque()
     {      
@@ -144,7 +184,8 @@ public class NPC : MonoBehaviour
     }  
     void Rotate_To_Target() //Força o NPC a Girar Para o Player
     {
-        Look_To_Player = true;
+        if (caido == true) Look_To_Player = false;
+        if (caido == false) Look_To_Player = true;
     }
     void End_rotate() //Parar de forçar o NPC a Olhar
     {
@@ -158,7 +199,6 @@ public class NPC : MonoBehaviour
     {
         Npc_Anim.SetBool("Ataq", false);
     }  
-
     void AtivaAtaque_Mao_Dir()
     {
         //Ativa o colisor MãoDireita
@@ -197,8 +237,7 @@ public class NPC : MonoBehaviour
     IEnumerator recuperar()
     {
         yield return new WaitForSeconds(1.0f);
-        Npc_Anim.SetBool("Hit", false);
-        nave.speed = SpeedMove;
+        Npc_Anim.SetBool("Hit", false);      
     }
     void Morto()
     {
@@ -209,8 +248,16 @@ public class NPC : MonoBehaviour
         rig.isKinematic = true;
         transform.tag = "Morto";
     }
+    void Deaf_check_Fix() // previnir Bug de quando o NPC Morre
+    {
+        if(Life <= 0)
+        {
+            Npc_Anim.SetBool("died", true);
+        }
+    }
     void Morrer_Event_FIX() // Evita que o NPC fique preso em Loop de morte
     {
+        dead = true;
         Npc_Anim.SetBool("died", false);
         nave.enabled = false;
     }
