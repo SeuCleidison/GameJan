@@ -123,7 +123,8 @@ public class NPC : MonoBehaviour
         Move_on_Ataque = false;
         Npc_Anim.SetBool("Cair", true);
         End_rotate();
-        nave.speed = 0;  
+        nave.speed = 0;
+       // transform.position = Vector3.Lerp(transform.position, Vector3.forward, + 1.0 * Time.deltaTime);
     }
     void noChaor()
     {
@@ -158,7 +159,7 @@ public class NPC : MonoBehaviour
     }
     IEnumerator PausaMove ()// Faz uma Pequena Pausa no movimento
     {
-        yield return new WaitForSeconds(1.0f);       
+        yield return new WaitForSeconds(0.5f);       
         novoPosicao = Random.Range(1, 5);
         evade[1] = new Vector3(transform.position.x + 1, transform.position.y, transform.position.z + 1.3f);
         evade[2] = new Vector3(transform.position.x + 1, transform.position.y, transform.position.z - 1.3f);
