@@ -394,12 +394,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Life: 100
   LifeMax: 100
+  Target_distance: 1000
   capColl: {fileID: 1795171389}
+  novoPosicao: 0
   Mao_dir: {fileID: 6585256815174011580}
   Mao_Esq: {fileID: 0}
   perna_dir: {fileID: 0}
   perna_Esq: {fileID: 0}
   Side_right: 1
+  caido: 0
+  Move_on_Ataque: 1
 --- !u!54 &8332411890959349768
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -440,7 +444,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.01
-  m_Speed: 1
+  m_Speed: 1.1
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
@@ -460,7 +464,7 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2148600830128100612}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 0.01
   m_Height: 2

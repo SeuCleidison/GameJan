@@ -13,10 +13,16 @@ public class Controle_cena : MonoBehaviour
     private GameObject[] Inimigos;
     private NPC[] npc;
     bool posic = true;
+    static public Controle_cena c_cena;
+   private void Awake()
+    {
+        c_cena = this;
+    }
     void Start()
     {
         instaciar(Valor_Personagem);// Spawna O Personagem q vai comecar
         ChecarAi();
+        StartCoroutine(contarInimigos());
     }  
     void instaciar(int p)
     {       
@@ -59,12 +65,25 @@ public class Controle_cena : MonoBehaviour
         }
     }
 
-    void ChecarAi()// procura todos os inimigos e coloca na Array
+    public void ChecarAi()// procura todos os inimigos e coloca na Array
     {
         Inimigos = GameObject.FindGameObjectsWithTag("Inimigo");
         npc = new NPC[Inimigos.Length];
         PosicionarAi();
-
+    }
+    IEnumerator contarInimigos()
+    {        
+        yield return new WaitForSeconds(2.0f);
+        Checa_N_AI();
+    }
+    void Checa_N_AI()// Verifica a Quantidade de Inimigos Para Travar ou Destravar a Camera.
+    {
+        GameObject[] Quant_inimig = GameObject.FindGameObjectsWithTag("Inimigo");
+        if(Quant_inimig.Length == 0)
+        {
+            Camera_Control.canCont.StopCam = false;
+        }
+        StartCoroutine(contarInimigos());
     }
     void PosicionarAi()
     {      
