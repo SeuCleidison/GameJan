@@ -30,11 +30,13 @@ public class Controle_cena : MonoBehaviour
         {
             Change_Char(0);
             Valor_Personagem = 0;
+            MenuMae.mae.AttMask(0);
         }
         if (Input.GetKeyDown(KeyCode.Alpha2) && Valor_Personagem != 1)
         {
             Change_Char(1);
             Valor_Personagem = 1;
+            MenuMae.mae.AttMask(1);
         }
     }
     void Change_Char(int p)

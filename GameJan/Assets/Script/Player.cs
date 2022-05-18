@@ -48,6 +48,14 @@ public class Player : MonoBehaviour
     }
     void Start()
     {
+        if (Char_ID == 0)
+        {
+         Life = MenuMae.mae.Life_P1;
+        }
+        if (Char_ID == 1)
+        {
+            Life = MenuMae.mae.Life_P2;
+        }
         character_Controlhe = GetComponent<CharacterController>();
         anin = GetComponent<Animator>();
         anin.SetBool("vivo", true);
@@ -55,6 +63,7 @@ public class Player : MonoBehaviour
         VelNormal = speed;
         BlockJunp = false;
         FimAtaque();
+
     }
 
     // Update is called once per frame
@@ -263,6 +272,14 @@ public class Player : MonoBehaviour
         FimAtaque();
         Life -= dano;
         anin.SetBool("Hit", true);
+        if (Char_ID == 0)
+        {
+            MenuMae.mae.Life_P1 = Life;
+        }
+        if (Char_ID == 1)
+        {
+            MenuMae.mae.Life_P2 = Life;
+        }
     }
     void Endhit()
     {

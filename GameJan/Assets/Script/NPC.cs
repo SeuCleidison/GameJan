@@ -86,7 +86,7 @@ public class NPC : MonoBehaviour
                 }
                 Rotate_To_Target();               
             }        
-            if (Look_To_Player &&  caido == true) // rotaciona O NPC para a direcao do Player
+            if (Look_To_Player &&  caido == false) // rotaciona O NPC para a direcao do Player
             {
                 Quaternion targetRotation;
                 targetRotation = Quaternion.LookRotation(Player.transform.position - transform.position);
@@ -116,15 +116,13 @@ public class NPC : MonoBehaviour
             Morto();
         }
         ProcuraLado();
-    }
-    
+    }    
     public void cair()
     {
         Move_on_Ataque = false;
         Npc_Anim.SetBool("Cair", true);
         End_rotate();
-        nave.speed = 0;
-       // transform.position = Vector3.Lerp(transform.position, Vector3.forward, + 1.0 * Time.deltaTime);
+        nave.speed = 0;    
     }
     void noChaor()
     {
