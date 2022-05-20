@@ -69535,6 +69535,13 @@ AnimationClip:
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
   m_Events:
+  - time: 0
+    functionName: PausarMove
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
   - time: 0.033333335
     functionName: Rotate_To_Target
     data: 
@@ -69551,6 +69558,13 @@ AnimationClip:
     messageOptions: 0
   - time: 0.33333334
     functionName: End_rotate
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 0.96666664
+    functionName: PausarMove
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

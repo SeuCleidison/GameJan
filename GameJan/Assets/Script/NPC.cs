@@ -11,13 +11,16 @@ public class NPC : MonoBehaviour
     public float Life = 100.0f, LifeMax = 100.0f,Target_distance = 1000; 
     private Animator Npc_Anim;
     private NavMeshAgent nave;
-    private GameObject Player;
+    private GameObject Player; 
+    [SerializeField] // prefab da Bala
+    private GameObject shoot,PontaArma;
     private float SpeedMove;
     private Rigidbody rig;
     [SerializeField]
     private CapsuleCollider capColl;
     [SerializeField]
-    int novoPosicao = 0;
+    private int Tipo_tinimigo = 0;// 0 == inimigo Comum , 1 == inimigo Rifle
+    private int novoPosicao = 0;
     #region Var de Combate
     [SerializeField]
     private GameObject Mao_dir, Mao_Esq, perna_dir, perna_Esq;
@@ -64,11 +67,15 @@ public class NPC : MonoBehaviour
         Target_distance = nave.remainingDistance;
         if (Player)
         {
-            frontPon = new Vector3(Player.transform.position.x-1, Player.transform.position.y, Player.transform.position.z);
+           if (Tipo_tinimigo == 0) frontPon = new Vector3(Player.transform.position.x-1, Player.transform.position.y, Player.transform.position.z);
+           if (Tipo_tinimigo == 1) frontPon = new Vector3(Player.transform.position.x - 3, Player.transform.position.y, Player.transform.position.z);
+
         }
         if (Player)
         {
-            BackPos = new Vector3(Player.transform.position.x + 1, Player.transform.position.y, Player.transform.position.z);
+            if (Tipo_tinimigo == 0) BackPos = new Vector3(Player.transform.position.x + 1, Player.transform.position.y, Player.transform.position.z);
+            if (Tipo_tinimigo == 1) BackPos = new Vector3(Player.transform.position.x + 3, Player.transform.position.y, Player.transform.position.z);
+
         }
         if (!dead)
         {
@@ -116,7 +123,11 @@ public class NPC : MonoBehaviour
             Morto();
         }
         ProcuraLado();
-    }    
+    }   
+    void Shoot()
+    {
+        Instantiate(shoot, PontaArma.transform.position, transform.rotation);
+    }
     public void cair()
     {
         Move_on_Ataque = false;
@@ -157,21 +168,34 @@ public class NPC : MonoBehaviour
     }
     IEnumerator PausaMove ()// Faz uma Pequena Pausa no movimento
     {
+        int NumeroDeVoltas = 0;//Sorteia o Numero de Pausas Antes de atacar novamente;
+        NumeroDeVoltas = Random.Range(2, 6);
         yield return new WaitForSeconds(0.5f);       
         novoPosicao = Random.Range(1, 5);
-        evade[1] = new Vector3(transform.position.x + 1, transform.position.y, transform.position.z + 1.3f);
-        evade[2] = new Vector3(transform.position.x + 1, transform.position.y, transform.position.z - 1.3f);
-        evade[3] = new Vector3(transform.position.x - 1, transform.position.y, transform.position.z + 1.3f);
-        evade[4] = new Vector3(transform.position.x - 1, transform.position.y, transform.position.z - 1.3f);
+        evade[1] = new Vector3(transform.position.x + 1, transform.position.y, transform.position.z + 2.3f);
+        evade[2] = new Vector3(transform.position.x + 1, transform.position.y, transform.position.z - 2.3f);
+        evade[3] = new Vector3(transform.position.x - 1, transform.position.y, transform.position.z + 2.3f);
+        evade[4] = new Vector3(transform.position.x - 1, transform.position.y, transform.position.z - 2.3f);
+             
+        for(int v =0;v < NumeroDeVoltas;v++)
+        {
+            yield return new WaitForSeconds(0.5f);
+            novoPosicao = Random.Range(1, 5);
+            evade[1] = new Vector3(transform.position.x + 2, transform.position.y, transform.position.z + 2.3f);
+            evade[2] = new Vector3(transform.position.x + 2, transform.position.y, transform.position.z - 2.3f);
+            evade[3] = new Vector3(transform.position.x - 2, transform.position.y, transform.position.z + 2.3f);
+            evade[4] = new Vector3(transform.position.x - 2, transform.position.y, transform.position.z - 2.3f);
+        }
     } 
     void Evade()
     {       
-        nave.destination = evade[novoPosicao];  
+       nave.destination = evade[novoPosicao];  
        StartCoroutine(BackToAtaque());
+       
     }
     IEnumerator BackToAtaque()// retorna O movimento de ataque
     {
-        yield return new WaitForSeconds(2.0f);
+        yield return new WaitForSeconds(5.0f);
         novoPosicao = 0;
         Move_on_Ataque = true;
     }
@@ -231,7 +255,7 @@ public class NPC : MonoBehaviour
     void PausarMove() //Faz o NPC parar o movimento quando ataca por exemplo
     {
         nave.speed = 0;
-        StartCoroutine(recuperar());
+      
     }
     IEnumerator recuperar()
     {
