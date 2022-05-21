@@ -69,7 +69,7 @@ public class Controle_cena : MonoBehaviour
     {
         Inimigos = GameObject.FindGameObjectsWithTag("Inimigo");
         npc = new NPC[Inimigos.Length];
-        PosicionarAi();
+        //PosicionarAi();
     }
     IEnumerator contarInimigos()
     {        

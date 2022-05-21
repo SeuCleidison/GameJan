@@ -22,7 +22,7 @@ public class NPC : MonoBehaviour
     Vector4[] cores; 
     [SerializeField]
     private CapsuleCollider capColl; 
-    public int Tipo_tinimigo = 0;// 0 == inimigo Comum , 1 == inimigo Rifle ,2 = Brute , 3 = Shild , 4 = Eletrico
+    public int Tipo_tinimigo = 0;// 0 == inimigo Comum , 1 == inimigo Rifle ,2 = Brute , 3 = Shild , 4 = Eletrico , 5 = Boss
     private int novoPosicao = 0;
     #region Var de Combate
     [SerializeField]
@@ -149,10 +149,26 @@ public class NPC : MonoBehaviour
     }
     public void cair()
     {
-        Move_on_Ataque = false;
-        Npc_Anim.SetBool("Cair", true);
-        End_rotate();
-        nave.speed = 0;    
+        int hitBrut = Random.Range(0, 5);//Chamce do Bruto ter Animacao de queda
+        if (Tipo_tinimigo != 2 && Tipo_tinimigo != 5)
+        {
+            Move_on_Ataque = false;
+            Npc_Anim.SetBool("Cair", true);
+
+            End_rotate();
+            nave.speed = 0;
+        }
+        if (Tipo_tinimigo == 2 || Tipo_tinimigo == 5)
+        {
+            if (hitBrut >= 4)
+            {
+                Move_on_Ataque = false;
+                Npc_Anim.SetBool("Cair", true);
+
+                End_rotate();
+                nave.speed = 0;
+            }
+        }
     }
     void noChaor()
     {
@@ -177,11 +193,11 @@ public class NPC : MonoBehaviour
         float dist_Back = Vector3.Distance(BackPos, transform.position);
         if(dist_Back < dist_Fron)
         {
-           // Side_right = false;
+            Side_right = false;
         }
         if (dist_Back > dist_Fron)
         {
-           // Side_right = true;
+            Side_right = true;
         }
     }
     IEnumerator PausaMove ()// Faz uma Pequena Pausa no movimento
@@ -214,14 +230,13 @@ public class NPC : MonoBehaviour
     IEnumerator BackToAtaque()// retorna O movimento de ataque
     {
         yield return new WaitForSeconds(2.0f);
-        if (Tipo_tinimigo != 2)
+        if (Tipo_tinimigo != 2 && Tipo_tinimigo != 5)
         {
             yield return new WaitForSeconds(6.0f);
         }
         novoPosicao = 0;
         Move_on_Ataque = true;
-    }
-    
+    }    
     #region funçoues de Combate
     void Ataque()
     {      
@@ -263,12 +278,12 @@ public class NPC : MonoBehaviour
             int hitLocal = Random.Range(0, 3);//Mecanica Não Aplicada
             int hitBrut = Random.Range(0, 4);//Chamce do Bruto ter Animacao de Hit
 
-            if (Tipo_tinimigo != 2)
+            if (Tipo_tinimigo != 2 && Tipo_tinimigo != 5)
             {
                 Npc_Anim.SetBool("Hit", true);
                 nave.speed = 0;
             }
-            if (Tipo_tinimigo == 2)
+            if (Tipo_tinimigo == 2 || Tipo_tinimigo == 5)
             {
                 if (hitBrut >= 3) Npc_Anim.SetBool("Hit", true);
             }
