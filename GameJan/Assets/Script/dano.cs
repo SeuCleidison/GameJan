@@ -10,12 +10,15 @@ public class dano : MonoBehaviour
     private bool Projetil = false;
     [SerializeField]
     private float VelocidadeProjetil = 3.0f;
+    private float direcao = 0;
     [SerializeField]
     private bool DesativaAoAtigir = true;
     NPC npc;
     Player player;
+    [SerializeField]
     float dano_ataque = 10.0f;
-    public bool Derrubar = false; 
+    public bool Derrubar = false;
+    public bool CorpoEletrico = false;
     void Start()
     {
         if (Projetil)
@@ -29,7 +32,7 @@ public class dano : MonoBehaviour
     {
         if(Projetil)
         {
-            transform.Translate(0, 0, VelocidadeProjetil);
+            transform.Translate((direcao/2), direcao, VelocidadeProjetil);
         }
     }
     private void OnTriggerEnter(Collider other)
@@ -39,14 +42,21 @@ public class dano : MonoBehaviour
             if (other.gameObject.CompareTag("Inimigo"))
             {
                 npc = other.GetComponent<NPC>();
-                npc.hit(dano_ataque);
-                if(Derrubar)
+                if (npc.Tipo_tinimigo == 3 && Projetil)
                 {
-                    npc.cair();
+                    direcao = 3.0f;
                 }
-                if(DesativaAoAtigir)
+                if (!Projetil || npc.Tipo_tinimigo != 3)
                 {
-                    gameObject.SetActive(false);
+                    npc.hit(dano_ataque);
+                    if (Derrubar)
+                    {
+                        npc.cair();
+                    }
+                    if (DesativaAoAtigir)
+                    {
+                        gameObject.SetActive(false);
+                    }
                 }
             }
         }
@@ -55,7 +65,14 @@ public class dano : MonoBehaviour
             if (other.gameObject.CompareTag("Player"))
             {
                 player = other.GetComponent<Player>();
-                player.hit(dano_ataque);
+                if(CorpoEletrico)
+                {
+                    player.cair(dano_ataque);
+                }
+                if (!CorpoEletrico)
+                {
+                    player.hit(dano_ataque);
+                }
                 if (DesativaAoAtigir)
                 {
                     gameObject.SetActive(false);

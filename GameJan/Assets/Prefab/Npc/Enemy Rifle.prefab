@@ -397,6 +397,9 @@ MonoBehaviour:
   Target_distance: 1000
   shoot: {fileID: 7283384142992056342, guid: 0c398cc6732b3954daab61c6f40da277, type: 3}
   PontaArma: {fileID: 3377258347228088402}
+  CorOriginal:
+  - {fileID: 4746483352458361974}
+  - {fileID: 180348399047268075}
   capColl: {fileID: 1795171389}
   Tipo_tinimigo: 1
   Mao_dir: {fileID: 6585256815174011580}
@@ -1039,7 +1042,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -840037777384891287, guid: bf418772881d2cf45ae2f15012dd17cd, type: 3}
+  - {fileID: 2100000, guid: 32b33516922e08a49bee30317ad15d3b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

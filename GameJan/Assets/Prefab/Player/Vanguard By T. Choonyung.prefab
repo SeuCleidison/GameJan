@@ -2432,6 +2432,7 @@ MonoBehaviour:
   MaoEsqueda: {fileID: 3247840835257477908}
   Pe_direito: {fileID: 875364552465333322}
   Pe_esquerdo: {fileID: 3733255187191153083}
+  capColl: {fileID: 8107766797105078419}
 --- !u!1 &9145399106185693667
 GameObject:
   m_ObjectHideFlags: 0

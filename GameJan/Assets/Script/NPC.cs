@@ -17,9 +17,12 @@ public class NPC : MonoBehaviour
     private float SpeedMove;
     private Rigidbody rig;
     [SerializeField]
-    private CapsuleCollider capColl;
+    Renderer[] CorOriginal; // verifica a Cor Original;
+    Renderer[] CorAlterar;// A cor do Dano a Cor Original;
+    Vector4[] cores; 
     [SerializeField]
-    private int Tipo_tinimigo = 0;// 0 == inimigo Comum , 1 == inimigo Rifle
+    private CapsuleCollider capColl; 
+    public int Tipo_tinimigo = 0;// 0 == inimigo Comum , 1 == inimigo Rifle ,2 = Brute , 3 = Shild , 4 = Eletrico
     private int novoPosicao = 0;
     #region Var de Combate
     [SerializeField]
@@ -43,6 +46,21 @@ public class NPC : MonoBehaviour
         caido = false;
         destivaAtaq();
         Ataque_Fim();
+        StartCoroutine(GetCor());
+    }
+    IEnumerator GetCor()
+    {
+        yield return new WaitForEndOfFrame();       
+       if(CorOriginal.Length >0)
+        {
+            CorAlterar = new Renderer[CorOriginal.Length];
+            cores = new Vector4[CorOriginal.Length];
+            for (int c = 0;c < CorOriginal.Length ; c++)
+            {
+                CorAlterar[c] = CorOriginal[c];
+                cores[c] = CorOriginal[c].material.color;
+            }
+        }
     }
     void Update()
     {
@@ -64,16 +82,17 @@ public class NPC : MonoBehaviour
     #region Animacoes Nao Combate
     void Movimento()
     {
-        Target_distance = nave.remainingDistance;
+        Target_distance = nave.remainingDistance; // BackPos = Poicao a Esquerda da tela  , frontPon  = Poicao a Direita da tela
+       // se Tipo_tinimigo tem valor igual a 1 Ele vai atacar a distancia Diferemde de 1 Corpo a corpo
         if (Player)
         {
-           if (Tipo_tinimigo == 0) frontPon = new Vector3(Player.transform.position.x-1, Player.transform.position.y, Player.transform.position.z);
+           if (Tipo_tinimigo != 1) frontPon = new Vector3(Player.transform.position.x-1, Player.transform.position.y, Player.transform.position.z);
            if (Tipo_tinimigo == 1) frontPon = new Vector3(Player.transform.position.x - 3, Player.transform.position.y, Player.transform.position.z);
 
         }
         if (Player)
         {
-            if (Tipo_tinimigo == 0) BackPos = new Vector3(Player.transform.position.x + 1, Player.transform.position.y, Player.transform.position.z);
+            if (Tipo_tinimigo != 1) BackPos = new Vector3(Player.transform.position.x + 1, Player.transform.position.y, Player.transform.position.z);
             if (Tipo_tinimigo == 1) BackPos = new Vector3(Player.transform.position.x + 3, Player.transform.position.y, Player.transform.position.z);
 
         }
@@ -106,15 +125,15 @@ public class NPC : MonoBehaviour
             }
 
         }
-        if (Move_on_Ataque == true)//Mover em Direcao para o taque
+        if (Move_on_Ataque == true)//Mover em Direcao para o ataque
         {
             if (Side_right)
             {
-                nave.destination = frontPon;
+                nave.destination = frontPon; // Direita do Alvo
             }
             if (!Side_right)
             {
-                nave.destination = BackPos;
+                nave.destination = BackPos;// Esquerda do Alvo
             }           
         }
         if (Life <= 0 && dead == false)
@@ -143,8 +162,7 @@ public class NPC : MonoBehaviour
         Npc_Anim.SetBool("NoChao", true);        
     }
     void levantar()
-    {
-       
+    {       
         caido = false;
         Npc_Anim.SetBool("Cair", false);
         Npc_Anim.SetBool("NoChao", false);
@@ -195,7 +213,11 @@ public class NPC : MonoBehaviour
     }
     IEnumerator BackToAtaque()// retorna O movimento de ataque
     {
-        yield return new WaitForSeconds(5.0f);
+        yield return new WaitForSeconds(2.0f);
+        if (Tipo_tinimigo != 2)
+        {
+            yield return new WaitForSeconds(6.0f);
+        }
         novoPosicao = 0;
         Move_on_Ataque = true;
     }
@@ -236,17 +258,47 @@ public class NPC : MonoBehaviour
     }
     public void hit(float dano = 0)
     {
-        int hitLocal = Random.Range(0, 3);
-        Npc_Anim.SetBool("Hit", true);
-        Npc_Anim.SetInteger("AreaHit", hitLocal);
-        nave.speed = 0;
-        StartCoroutine(recuperar());
-        Life -= dano;
+        if (caido == false)
+        {
+            int hitLocal = Random.Range(0, 3);//Mecanica Não Aplicada
+            int hitBrut = Random.Range(0, 4);//Chamce do Bruto ter Animacao de Hit
+
+            if (Tipo_tinimigo != 2)
+            {
+                Npc_Anim.SetBool("Hit", true);
+                nave.speed = 0;
+            }
+            if (Tipo_tinimigo == 2)
+            {
+                if (hitBrut >= 3) Npc_Anim.SetBool("Hit", true);
+            }
+            Npc_Anim.SetInteger("AreaHit", hitLocal);
+            StartCoroutine(recuperar());
+            Life -= dano;
+            CorHit();
+        }
+    }
+    void CorHit()// ao ser atingido Altera a cor
+    {
+        for (int c = 0; c < CorOriginal.Length; c++)
+        {
+            CorOriginal[c].material.color = new Vector4(1, 0, 0, 1);
+        }
+        StartCoroutine(restaurarCor());
+    }
+    IEnumerator restaurarCor()
+    {
+        yield return new WaitForSecondsRealtime(0.1f);
+        for (int c = 0; c < CorOriginal.Length; c++)
+        {      
+            CorOriginal[c].material.color =  cores[c];
+        }
     }
     void Endhit()
     {
         Npc_Anim.SetBool("Hit", false);
         End_rotate();
+
     }
     void Move_Npc() //Retorna o Valor normal da Velocidade 
     {
@@ -254,8 +306,7 @@ public class NPC : MonoBehaviour
     }
     void PausarMove() //Faz o NPC parar o movimento quando ataca por exemplo
     {
-        nave.speed = 0;
-      
+        nave.speed = 0;      
     }
     IEnumerator recuperar()
     {
@@ -283,6 +334,11 @@ public class NPC : MonoBehaviour
         dead = true;
         Npc_Anim.SetBool("died", false);
         nave.enabled = false;
+        for (int c = 0; c < CorOriginal.Length; c++)
+        {
+            CorOriginal[c].material.color = cores[c];
+        }
+        Destroy(gameObject, 10.0f);
     }
     #endregion
 }

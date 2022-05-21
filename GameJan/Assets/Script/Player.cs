@@ -40,6 +40,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     GameObject MaoDireita, MaoEsqueda, Pe_direito, Pe_esquerdo;
     float cadenciaTiro = 1;// apenas Para Player2
+    [SerializeField]
+    CapsuleCollider capColl;
     #endregion
 
     private void Awake()
@@ -139,7 +141,33 @@ public class Player : MonoBehaviour
         anin.SetBool("Ground", character_Controlhe.isGrounded);
         //Movimentacao  Ground
     }
-   
+    public void cair(float dano = 0)
+    {
+        anin.SetBool("Cair",true);       
+        speed = 0;
+        Life -= dano;  
+        if (Char_ID == 0)
+        {
+            MenuMae.mae.Life_P1 = Life;
+        }
+        if (Char_ID == 1)
+        {
+            MenuMae.mae.Life_P2 = Life;
+        }   
+    }
+    void noChaor()
+    {
+        anin.SetBool("Rise", false);
+        anin.SetBool("Cair", false);
+        if (capColl) capColl.enabled = false;
+        speed = 0;
+    }
+    void levantar()
+    {
+        if (capColl) capColl.enabled = true;
+        speed = VelNormal;
+        anin.SetBool("Rise", true);
+    }
     void Change_Char(int c)
     {
         Char_ID = c;

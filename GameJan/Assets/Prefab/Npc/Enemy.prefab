@@ -358,7 +358,7 @@ Transform:
   - {fileID: 3704581766986747025}
   - {fileID: 6542287089874710314}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &4646203442831332804
 Animator:
@@ -395,8 +395,13 @@ MonoBehaviour:
   Life: 100
   LifeMax: 100
   Target_distance: 1000
+  shoot: {fileID: 0}
+  PontaArma: {fileID: 0}
+  CorOriginal:
+  - {fileID: 180348399047268075}
+  - {fileID: 4746483352458361974}
   capColl: {fileID: 1795171389}
-  novoPosicao: 0
+  Tipo_tinimigo: 0
   Mao_dir: {fileID: 6585256815174011580}
   Mao_Esq: {fileID: 0}
   perna_dir: {fileID: 0}
@@ -1005,7 +1010,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -840037777384891287, guid: bf418772881d2cf45ae2f15012dd17cd, type: 3}
+  - {fileID: 2100000, guid: 32b33516922e08a49bee30317ad15d3b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
