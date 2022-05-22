@@ -6,6 +6,7 @@ using UnityEngine;
 [RequireComponent(typeof(CapsuleCollider))]
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(AudioSource))]
 public class NPC : MonoBehaviour
 {
     public float Life = 100.0f, LifeMax = 100.0f,Target_distance = 1000; 
@@ -34,6 +35,9 @@ public class NPC : MonoBehaviour
     private bool caido = false, Move_on_Ataque = true;
     Vector3 frontPon,BackPos;
     Vector3[] evade = new Vector3[5];
+    [HideInInspector]
+    public AudioSource SomDano;    
+    public AudioClip SomEfeito,Morrer;
     #endregion
     void Start()
     {
@@ -47,6 +51,7 @@ public class NPC : MonoBehaviour
         destivaAtaq();
         Ataque_Fim();
         StartCoroutine(GetCor());
+        SomDano = GetComponent<AudioSource>();
     }
     IEnumerator GetCor()
     {
@@ -149,12 +154,14 @@ public class NPC : MonoBehaviour
     }
     public void cair()
     {
+        destivaAtaq();
+        Ataque_Fim();
         int hitBrut = Random.Range(0, 5);//Chamce do Bruto ter Animacao de queda
         if (Tipo_tinimigo != 2 && Tipo_tinimigo != 5)
         {
             Move_on_Ataque = false;
             Npc_Anim.SetBool("Cair", true);
-
+            capColl.enabled = false;
             End_rotate();
             nave.speed = 0;
         }
@@ -329,13 +336,17 @@ public class NPC : MonoBehaviour
         Npc_Anim.SetBool("Hit", false);      
     }
     void Morto()
-    {
+    {    
         Npc_Anim.SetBool("died", true);
         StopAllCoroutines();
         nave.speed = 0;
         if (capColl) capColl.enabled = false;
         rig.isKinematic = true;
         transform.tag = "Morto";
+        destivaAtaq();
+        Ataque_Fim();
+        SomDano.clip = Morrer;
+        SomDano.Play();
     }
     void Deaf_check_Fix() // previnir Bug de quando o NPC Morre
     {

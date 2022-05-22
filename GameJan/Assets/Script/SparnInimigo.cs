@@ -22,8 +22,7 @@ public class SparnInimigo : MonoBehaviour
         
     }
     void spawnarInimigos()
-    {
-     
+    {     
         for (int ini = 0; ini < NumerodeInimigos; ini++)
         {
             pontSpawn = new Vector3(PontoSpawns[Qtpontos].transform.rotation.x + 0.5f, PontoSpawns[Qtpontos].transform.rotation.y, PontoSpawns[Qtpontos].transform.rotation.z);

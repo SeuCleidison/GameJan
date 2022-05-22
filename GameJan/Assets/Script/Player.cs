@@ -4,6 +4,7 @@ using UnityEngine;
 
 
 [RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(AudioSource))]
 [RequireComponent(typeof(CapsuleCollider))]
 public class Player : MonoBehaviour
 {
@@ -25,6 +26,11 @@ public class Player : MonoBehaviour
     Vector3 V_rotatao;
     [SerializeField]
     private CapsuleCollider cap;
+    [SerializeField]
+    AudioSource Fonte_Passos, Fonte_Soco, Fonte_Hit;
+    [SerializeField]
+    AudioClip Som_Passos,Som_Soco,Hit,DeafSound,Punch;
+    public bool AbreDialogo = false;
     #endregion
 
     #region varLutas
@@ -50,6 +56,7 @@ public class Player : MonoBehaviour
     }
     void Start()
     {
+        AbreDialogo = false;
         if (Char_ID == 0)
         {
          Life = MenuMae.mae.Life_P1;
@@ -64,18 +71,25 @@ public class Player : MonoBehaviour
         originalStepOff = character_Controlhe.stepOffset;
         VelNormal = speed;
         BlockJunp = false;
-        FimAtaque();
-
+        FimAtaque();      
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!dead)
-        {
-            Movimentacao();
-            Animacoes();
-            Atacar();
+        if (!dead )
+        {   
+            if(!AbreDialogo)
+            {
+                Movimentacao();
+                Animacoes();
+                Atacar();
+            }
+            if (AbreDialogo)
+            {             
+                anin.SetFloat("Movimentacao", 0);
+                anin.SetBool("Ground", true);
+            }
         }
         if(Life <= 0 && dead == false)
         {
@@ -86,7 +100,6 @@ public class Player : MonoBehaviour
     }
     void Movimentacao()
     {
-
         horizontalInput = (Input.GetAxis("Horizontal") * speed);
         verticalInput = (Input.GetAxis("Vertical") * speed);
         movementDirection = new Vector3(horizontalInput, 0, verticalInput);
@@ -308,18 +321,35 @@ public class Player : MonoBehaviour
         {
             MenuMae.mae.Life_P2 = Life;
         }
+        if(Life>0)
+        {
+            Fonte_Hit.clip = Hit;
+            Fonte_Hit.Play();
+        }
+    }
+    void passosSom()
+    {
+        Fonte_Passos.clip = Som_Passos;
+        Fonte_Passos.Play();
     }
     void Endhit()
     {
         anin.SetBool("Hit", false);
     }
     void Morto()
-    {   
+    {
+        Fonte_Hit.clip = DeafSound;
+        Fonte_Hit.Play();
         if (cap) cap.enabled = false;
         anin.SetBool("died", true);
         anin.SetBool("vivo", true);
         StopAllCoroutines();     
         transform.tag = "Morto";
+    }
+    void SomPunc()
+    {
+        Fonte_Soco.clip = Punch;
+        Fonte_Soco.Play();
     }
 
     void Morrer_Event_FIX() // Evita que o NPC fique preso em Loop de morte

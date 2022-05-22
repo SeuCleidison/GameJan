@@ -5,14 +5,14 @@ using UnityEngine;
 public class Controle_cena : MonoBehaviour
 {
     [SerializeField]
-    private int Valor_Personagem = 0;
+    private int Valor_Personagem = 0, cena = 2;
     [SerializeField]
     private GameObject player_1, player_2;//prefab para Instanciar
     private GameObject C_change; // presonagen Instanciado
     [SerializeField]
     private GameObject[] Inimigos;
     private NPC[] npc;
-    bool posic = true;
+    bool posic = true, pl;
     static public Controle_cena c_cena;
    private void Awake()
     {
@@ -27,22 +27,26 @@ public class Controle_cena : MonoBehaviour
     void instaciar(int p)
     {       
         if (player_1 && p == 0) C_change = Instantiate(player_1,transform.position,transform.rotation);
-        if (player_2 && p == 1) C_change = Instantiate(player_1, transform.position, transform.rotation);
+        if (player_2 && p == 1) C_change = Instantiate(player_2, transform.position, transform.rotation);
     }
-    // Update is called once per frame
+    // Update is called once per frame   Life_P1 <= 0 || Life_P1 <= 1
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Alpha1) && Valor_Personagem != 0)
+        if (Input.GetKeyDown(KeyCode.LeftShift) && (MenuMae.mae.Life_P1 > 0 && MenuMae.mae.Life_P2 > 0) && cena == 2)
         {
-            Change_Char(0);
-            Valor_Personagem = 0;
-            MenuMae.mae.AttMask(0);
-        }
-        if (Input.GetKeyDown(KeyCode.Alpha2) && Valor_Personagem != 1)
-        {
-            Change_Char(1);
-            Valor_Personagem = 1;
-            MenuMae.mae.AttMask(1);
+            pl = !pl;
+            if (!pl)
+            {
+                Change_Char(0);
+                Valor_Personagem = 0;
+                MenuMae.mae.AttMask(0);
+            }
+            if (pl)
+            {
+                Change_Char(1);
+                Valor_Personagem = 1;
+                MenuMae.mae.AttMask(1);
+            }
         }
     }
     void Change_Char(int p)

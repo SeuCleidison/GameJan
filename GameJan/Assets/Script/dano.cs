@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+[RequireComponent(typeof(AudioSource))]
 public class dano : MonoBehaviour
 {
-
+    AudioSource SomDano;
+    [SerializeField]
+    AudioClip SomEfeito;
     public bool Inimigo = false;
     [SerializeField]
     private bool Projetil = false;
@@ -20,10 +22,17 @@ public class dano : MonoBehaviour
     public bool Derrubar = false;
     public bool CorpoEletrico = false;
     void Start()
-    {
+    {      
+        SomDano = GetComponent<AudioSource>();
+
         if (Projetil)
         {
             Destroy(gameObject,0.75f);
+        }     
+        if (Projetil)
+        {
+            SomDano.clip = SomEfeito;
+            SomDano.Play();
         }
     }
 
@@ -41,10 +50,15 @@ public class dano : MonoBehaviour
         {
             if (other.gameObject.CompareTag("Inimigo"))
             {
-                npc = other.GetComponent<NPC>();
+                 npc = other.GetComponent<NPC>();
                 if (npc.Tipo_tinimigo == 3 && Projetil)
                 {
                     direcao = 3.0f;
+                }
+                if (!Projetil)
+                {
+                    npc.SomDano.clip = npc.SomEfeito;
+                    npc.SomDano.Play();
                 }
                 if (!Projetil || npc.Tipo_tinimigo != 3)
                 {
