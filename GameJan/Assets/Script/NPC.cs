@@ -9,7 +9,9 @@ using UnityEngine;
 [RequireComponent(typeof(AudioSource))]
 public class NPC : MonoBehaviour
 {
-    public float Life = 100.0f, LifeMax = 100.0f,Target_distance = 1000; 
+    public float Life = 100.0f, LifeMax = 100.0f,Target_distance = 1000;
+    [SerializeField]
+    private bool SouBoss = false;
     private Animator Npc_Anim;
     private NavMeshAgent nave;
     private GameObject Player; 
@@ -347,6 +349,17 @@ public class NPC : MonoBehaviour
         Ataque_Fim();
         SomDano.clip = Morrer;
         SomDano.Play();
+        if(SouBoss == true)
+        {
+            StartCoroutine(Concluir());
+        }
+    }
+    IEnumerator Concluir()
+    {
+        yield return new WaitForSeconds(1.0f);
+        Time.timeScale = 1.0f;
+        LOAD.loadScena("EndGame");
+
     }
     void Deaf_check_Fix() // previnir Bug de quando o NPC Morre
     {

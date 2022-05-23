@@ -19,7 +19,7 @@ public class opcoes : MonoBehaviour
     [SerializeField]
     bool isTitle = false;
     [SerializeField]
-    private GameObject Bt_Title, BtOpicoes;
+    private GameObject Bt_Title, BtOpicoes,Credito;
     void Awake()
     {
         resolucoesSuportadas = Screen.resolutions;
@@ -86,6 +86,17 @@ public class opcoes : MonoBehaviour
         }
         else
             Debug.Log("Setar Menu Opcoes");
+
+    }
+    //Credito
+    public void Credito_T(bool b)
+    {
+        if (Credito)
+        {
+            Credito.SetActive(b);
+        }
+        else
+            Debug.Log("Setar Menu Credito");
 
     }
     public void FecharJogo()

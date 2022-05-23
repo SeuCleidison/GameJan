@@ -3282,6 +3282,7 @@ MonoBehaviour:
   isTitle: 0
   Bt_Title: {fileID: 3595210451315101089}
   BtOpicoes: {fileID: 3595210450197900499}
+  Credito: {fileID: 0}
 --- !u!114 &650978596
 MonoBehaviour:
   m_ObjectHideFlags: 0

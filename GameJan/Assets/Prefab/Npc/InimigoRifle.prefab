@@ -2059,8 +2059,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85eaeac67f646e04e81d909a5be874c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Life: 100
-  LifeMax: 100
+  Life: 50
+  LifeMax: 50
   Target_distance: 1000
   shoot: {fileID: 7283384142992056342, guid: 0c398cc6732b3954daab61c6f40da277, type: 3}
   PontaArma: {fileID: 2368296274071088888}
@@ -2089,7 +2089,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 5585444852304596888}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.1
+  m_Radius: 0.2
   m_Speed: 1
   m_Acceleration: 8
   avoidancePriority: 50

@@ -393,8 +393,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85eaeac67f646e04e81d909a5be874c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Life: 100
-  LifeMax: 100
+  Life: 50
+  LifeMax: 50
   Target_distance: 1000
   shoot: {fileID: 7283384142992056342, guid: 0c398cc6732b3954daab61c6f40da277, type: 3}
   PontaArma: {fileID: 3377258347228088402}
